@@ -3,15 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ReactiveDomain.Bus;
+using ReactiveDomain.Domain;
 
 namespace AccountDemo1
 {
-    public class AccountSvc
+    public class AccountSvc : IHandleCommand<>
     {
         private Account account = new Account();
+        private IRepository _repo;
 
-        public AccountSvc()
+        public AccountSvc(ICommandBus bus, IRepository repo)
         {
+            _repo = repo;
         }
 
         public double GetBalance()
@@ -37,6 +41,11 @@ namespace AccountDemo1
             }
 
             account.ApplyDebit(trans.Amount);
+        }
+
+        public void CreateAccount()
+        {
+
         }
     }
 }

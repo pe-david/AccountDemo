@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AccountDemo1;
 using EventStore.ClientAPI;
+using ReactiveDomain.Bus;
 using ReactiveDomain.Domain;
 using ReactiveDomain.EventStore;
 
@@ -30,7 +31,9 @@ namespace AccountDemo1
             Console.WriteLine("Hit return on an empty line to cancel...");
             Console.WriteLine("Enter a value. Negative values are debits, positive are credits.");
 
-            var svc = new AccountSvc();
+            var bus = new CommandBus("testBus");
+
+            var svc = new AccountSvc(bus, _esRepository);
 
             while (true)
             {

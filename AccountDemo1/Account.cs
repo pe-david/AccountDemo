@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ReactiveDomain.Domain;
 
 namespace AccountDemo1
 {
-    public class Account
+    public class Account : AggregateBase
     {
         static Account()
         {
