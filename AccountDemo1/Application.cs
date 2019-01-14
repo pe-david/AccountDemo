@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AccountDemo1;
+using AccountDemo1.Messages;
 using EventStore.ClientAPI;
 using ReactiveDomain.Bus;
 using ReactiveDomain.Domain;
@@ -16,6 +17,7 @@ namespace AccountDemo1
     {
         private EventStoreLoader _es;
         private GetEventStoreRepository _esRepository;
+        private ICommandBus _bus;
         public IEventStoreConnection EsConnection { get; private set; }
 
         public void Bootstrap()
@@ -24,6 +26,7 @@ namespace AccountDemo1
             _es.SetupEventStore(new DirectoryInfo(@"C:\Users\rosed18169\source\EventStore-OSS-Win-v3.9.4"));
             EsConnection = _es.Connection;
             _esRepository = new GetEventStoreRepository(_es.Connection);
+            _bus = new CommandBus("testBus", false);
         }
 
         public void Run()
@@ -31,43 +34,49 @@ namespace AccountDemo1
             Console.WriteLine("Hit return on an empty line to cancel...");
             Console.WriteLine("Enter a value. Negative values are debits, positive are credits.");
 
-            var bus = new CommandBus("testBus");
+            var svc = new AccountSvc(_bus, _esRepository);
 
-            var svc = new AccountSvc(bus, _esRepository);
+            var accountId = Guid.Parse("{FDAFEE94-B2C4-4F09-B6BC-7734CE862CA8}");
+            _bus.Fire(new CreateAccount(
+                accountId,
+                "TheAccount",
+                new Guid(),
+                Guid.Empty));
 
-            while (true)
-            {
-                var line = Console.ReadLine();
-                if (string.IsNullOrWhiteSpace(line))
-                {
-                    break;
-                }
+            //while (true)
+            //{
+            //    var line = Console.ReadLine();
+            //    if (string.IsNullOrWhiteSpace(line))
+            //    {
+            //        break;
+            //    }
 
-                if (double.TryParse(line, out var val))
-                {
-                    try
-                    {
-                        if (val < 0)
-                        {
-                            var trans = new DebitTransaction(val);
-                            svc.ApplyDebit(trans);
-                        }
-                        else
-                        {
-                            var trans = new CreditTransaction(val);
-                            svc.ApplyCredit(trans);
-                        }
-                    }
-                    catch (ArgumentOutOfRangeException e)
-                    {
-                        Console.WriteLine(e.Message.Split('\r', '\n')[0]);
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("Unable to process transaction.");
-                }
-            }
+            //    if (double.TryParse(line, out var val))
+            //    {
+            //        try
+            //        {
+            //            if (val < 0)
+            //            {
+            //                _bus.Fire(new DebitTransaction(val));
+            //                //var trans = new DebitTransaction(val);
+            //                //svc.ApplyDebit(trans);
+            //            }
+            //            else
+            //            {
+            //                var trans = new CreditTransaction(val);
+            //                svc.ApplyCredit(trans);
+            //            }
+            //        }
+            //        catch (ArgumentOutOfRangeException e)
+            //        {
+            //            Console.WriteLine(e.Message.Split('\r', '\n')[0]);
+            //        }
+            //    }
+            //    else
+            //    {
+            //        Console.WriteLine("Unable to process transaction.");
+            //    }
+            //}
         }
     }
 

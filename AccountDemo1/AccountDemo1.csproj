@@ -147,6 +147,9 @@
     <Compile Include="Application.cs" />
     <Compile Include="CreditTransaction.cs" />
     <Compile Include="DebitTransaction.cs" />
+    <Compile Include="Messages\AccountCreated.cs" />
+    <Compile Include="Messages\CreateAccount.cs" />
+    <Compile Include="Messages\ApplyCredit.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Transaction.cs" />
