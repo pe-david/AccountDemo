@@ -22,6 +22,7 @@ namespace AccountDemo1
             _bus = bus;
 
             _bus.Subscribe<CreateAccount>(this);
+            GetOrCreateAccount();
         }
 
         //public double GetBalance()
@@ -60,13 +61,12 @@ namespace AccountDemo1
             {
             }
 
-            _account = new Account(
+
+            _bus.Fire(new CreateAccount(
                 Constants.AccountId,
                 "TheAccount",
                 Guid.NewGuid(),
-                Guid.Empty);
-
-            _repo.Save(_account, Constants.AccountId);
+                null));
         }
 
         public CommandResponse Handle(CreateAccount command)

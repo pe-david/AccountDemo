@@ -36,12 +36,6 @@ namespace AccountDemo1
 
             var svc = new AccountSvc(_bus, _esRepository);
 
-            _bus.Fire(new CreateAccount(
-                Constants.AccountId,
-                "TheAccount",
-                Guid.NewGuid(),
-                null));
-
             //while (true)
             //{
             //    var line = Console.ReadLine();

@@ -15,6 +15,8 @@ namespace AccountDemo1
             var app = new Application();
             app.Bootstrap();
             app.Run();
+
+            Console.ReadKey();
         }
     }
 }
