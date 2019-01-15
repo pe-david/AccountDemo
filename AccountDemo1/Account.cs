@@ -42,7 +42,14 @@ namespace AccountDemo1
         private void RegisterEvents()
         {
             Register<AccountCreated>(Apply);
-            Register<ApplyCredit>(Apply);
+            Register<CreditApplied>(Apply);
+        }
+
+        private void Apply(CreditApplied @event)
+        {
+            //Balance += @event.Amount;
+            Console.WriteLine($"Credit Applied: {@event.Amount}");
+
         }
 
         private void Apply(AccountCreated @event)
@@ -50,10 +57,10 @@ namespace AccountDemo1
             Console.WriteLine($"Account created: {@event.Name}");
         }
 
-        private void Apply(ApplyCredit @event)
-        {
-            Console.WriteLine($"Credit amount: {@event.Amount}");
-        }
+        //private void Apply(ApplyCredit @event)
+        //{
+        //    Console.WriteLine($"Credit amount: {@event.Amount}");
+        //}
 
         public double Balance { get; private set; }
 
@@ -63,17 +70,17 @@ namespace AccountDemo1
             WriteBalance();
         }
 
-        public void ApplyDebit(double amount)
-        {
-            var temp = Balance + amount;
-            if (temp < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(amount), "Balance cannot be below 0.");
-            }
+        //public void ApplyDebit(double amount)
+        //{
+        //    var temp = Balance + amount;
+        //    if (temp < 0)
+        //    {
+        //        throw new ArgumentOutOfRangeException(nameof(amount), "Balance cannot be below 0.");
+        //    }
 
-            Balance = temp;
-            WriteBalance();
-        }
+        //    Balance = temp;
+        //    WriteBalance();
+        //}
 
         public void WriteBalance()
         {

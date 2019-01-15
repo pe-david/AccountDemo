@@ -10,9 +10,10 @@ using ReactiveDomain.Messaging;
 
 namespace AccountDemo1
 {
-    public class AccountSvc : IHandleCommand<CreateAccount>
+    public class AccountSvc : 
+        IHandleCommand<CreateAccount>,
+        IHandleCommand<ApplyCredit>
     {
-        private Account _account;
         private readonly IRepository _repo;
         private readonly ICommandBus _bus;
 
@@ -22,63 +23,48 @@ namespace AccountDemo1
             _bus = bus;
 
             _bus.Subscribe<CreateAccount>(this);
-            GetOrCreateAccount();
+            _bus.Subscribe<ApplyCredit>(this);
+            TryCreateAccount();
         }
 
-        //public double GetBalance()
-        //{
-        //    return account.Balance;
-        //}
-
-        public void ApplyCredit(CreditTransaction trans)
-        {
-            //if (trans.Amount < 0)
-            //{
-            //    throw new ArgumentOutOfRangeException(nameof(trans.Amount), "Amount cannot be less than 0.");
-            //}
-
-            //account.ApplyCredit(trans.Amount);
-        }
-
-        //public void ApplyDebit(DebitTransaction trans)
-        //{
-        //    //if (trans.Amount >= 0)
-        //    //{
-        //    //    throw new ArgumentOutOfRangeException(nameof(trans.Amount), "Amount cannot be greater than or equal to 0.");
-        //    //}
-
-        //    //account.ApplyDebit(trans.Amount);
-        //}
-
-        public void GetOrCreateAccount()
+        public void TryCreateAccount()
         {
             try
             {
-                _account = _repo.GetById<Account>(Constants.AccountId);
+                // if this succeeds, no need to create the account - it exists
+                _repo.GetById<Account>(Constants.AccountId);
                 return;
             }
             catch
             {
             }
 
-
             _bus.Fire(new CreateAccount(
                 Constants.AccountId,
                 "TheAccount",
                 Guid.NewGuid(),
-                null));
+                Guid.Empty));
         }
 
         public CommandResponse Handle(CreateAccount command)
         {
-            _account = new Account(
+            var account = new Account(
             command.AccountId,
             command.Name,
             command.CorrelationId,
             command.SourceId);
 
             var commitId = Guid.NewGuid();
-            _repo.Save(_account, commitId);
+            _repo.Save(account, commitId);
+            return command.Succeed();
+        }
+
+        public CommandResponse Handle(ApplyCredit command)
+        {
+            var account = _repo.GetById<Account>(command.AccountId);
+            account.ApplyCredit(command.Amount);
+
+            _repo.Save(account, Guid.NewGuid());
             return command.Succeed();
         }
     }

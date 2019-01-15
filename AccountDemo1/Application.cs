@@ -50,14 +50,14 @@ namespace AccountDemo1
             //        {
             //            if (val < 0)
             //            {
-            //                _bus.Fire(new DebitTransaction(val));
-            //                //var trans = new DebitTransaction(val);
-            //                //svc.ApplyDebit(trans);
+            //                //_bus.Fire(new DebitTransaction(val));
             //            }
             //            else
             //            {
-            //                var trans = new CreditTransaction(val);
-            //                svc.ApplyCredit(trans);
+            //                _bus.Fire(new ApplyCredit(
+            //                    val,
+            //                    Guid.NewGuid(),
+            //                    null));
             //            }
             //        }
             //        catch (ArgumentOutOfRangeException e)
