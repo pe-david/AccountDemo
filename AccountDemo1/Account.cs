@@ -1,26 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AccountDemo1.Messages;
+﻿using AccountDemo1.Messages;
 using EventStore.Common.Utils;
 using ReactiveDomain.Domain;
+using System;
 
 namespace AccountDemo1
 {
     public class Account : AggregateBase
     {
-        static Account()
-        {
-            Console.WriteLine("Initial balance: $0.00");
-        }
+        //public Account()
+        //{
+        //    Console.WriteLine("Initial balance: $0.00");
+        //}
 
         public Account(
             Guid accountId,
             string name,
             Guid correlationId,
-            Guid? sourceId) : this()
+            Guid? sourceId) : base()
         {
             Ensure.NotEmptyGuid(accountId, "studyId");
             Ensure.NotNullOrEmpty(name, "name");
@@ -47,40 +43,29 @@ namespace AccountDemo1
 
         private void Apply(CreditApplied @event)
         {
-            //Balance += @event.Amount;
+            Balance += @event.Amount;
             Console.WriteLine($"Credit Applied: {@event.Amount}");
 
         }
 
         private void Apply(AccountCreated @event)
         {
+            Id = @event.AccountId;
             Console.WriteLine($"Account created: {@event.Name}");
         }
 
-        //private void Apply(ApplyCredit @event)
-        //{
-        //    Console.WriteLine($"Credit amount: {@event.Amount}");
-        //}
-
         public double Balance { get; private set; }
 
-        public void ApplyCredit(double amount)
+        public void ApplyCredit(double amount, Guid corrId, Guid sourceId )
         {
-            Balance += amount;
-            WriteBalance();
+            //Balance += amount;
+
+            RaiseEvent(new CreditApplied(
+                Id,
+                amount,
+                corrId,
+                sourceId: sourceId));
         }
-
-        //public void ApplyDebit(double amount)
-        //{
-        //    var temp = Balance + amount;
-        //    if (temp < 0)
-        //    {
-        //        throw new ArgumentOutOfRangeException(nameof(amount), "Balance cannot be below 0.");
-        //    }
-
-        //    Balance = temp;
-        //    WriteBalance();
-        //}
 
         public void WriteBalance()
         {

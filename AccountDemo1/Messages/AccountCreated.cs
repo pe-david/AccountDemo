@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using ReactiveDomain.Messaging;
+using System;
 using System.Threading;
-using System.Threading.Tasks;
-using ReactiveDomain.Messaging;
 
 namespace AccountDemo1.Messages
 {

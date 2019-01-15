@@ -1,21 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ReactiveDomain.Messaging;
+﻿using ReactiveDomain.Messaging;
+using System;
+using System.Threading;
 
 namespace AccountDemo1.Messages
 {
     public class CreditApplied : DomainEvent
     {
-        public readonly double Amount;
+        private static readonly int TypeId = Interlocked.Increment(ref NextMsgId);
+        public override int MsgTypeId => TypeId;
 
-        protected CreditApplied(
+        public readonly double Amount;
+        public readonly Guid AccountId;
+
+        public CreditApplied(
+            Guid accountId,
             double amount,
             Guid correlationId,
             Guid sourceId) : base(correlationId, sourceId)
         {
+            AccountId = accountId;
             Amount = amount;
         }
     }

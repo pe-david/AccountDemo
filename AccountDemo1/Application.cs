@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AccountDemo1;
-using AccountDemo1.Messages;
+﻿using AccountDemo1.Messages;
 using EventStore.ClientAPI;
 using ReactiveDomain.Bus;
-using ReactiveDomain.Domain;
 using ReactiveDomain.EventStore;
+using System;
+using System.IO;
 
 namespace AccountDemo1
 {
@@ -33,43 +27,49 @@ namespace AccountDemo1
         {
             Console.WriteLine("Hit return on an empty line to cancel...");
             Console.WriteLine("Enter a value. Negative values are debits, positive are credits.");
-
+            var accountId = Guid.NewGuid();
             var svc = new AccountSvc(_bus, _esRepository);
+            _bus.Fire(new CreateAccount(
+                                accountId,
+                                "TheAccount",
+                                Guid.NewGuid(),
+                                Guid.Empty));
 
-            //while (true)
-            //{
-            //    var line = Console.ReadLine();
-            //    if (string.IsNullOrWhiteSpace(line))
-            //    {
-            //        break;
-            //    }
+            while (true)
+            {
+                var line = Console.ReadLine();
+                if (string.IsNullOrWhiteSpace(line))
+                {
+                    break;
+                }
 
-            //    if (double.TryParse(line, out var val))
-            //    {
-            //        try
-            //        {
-            //            if (val < 0)
-            //            {
-            //                //_bus.Fire(new DebitTransaction(val));
-            //            }
-            //            else
-            //            {
-            //                _bus.Fire(new ApplyCredit(
-            //                    val,
-            //                    Guid.NewGuid(),
-            //                    null));
-            //            }
-            //        }
-            //        catch (ArgumentOutOfRangeException e)
-            //        {
-            //            Console.WriteLine(e.Message.Split('\r', '\n')[0]);
-            //        }
-            //    }
-            //    else
-            //    {
-            //        Console.WriteLine("Unable to process transaction.");
-            //    }
-            //}
+                if (double.TryParse(line, out var val))
+                {
+                    try
+                    {
+                        if (val < 0)
+                        {
+                            //_bus.Fire(new DebitTransaction(val));
+                        }
+                        else
+                        {
+                            _bus.Fire(new ApplyCredit(
+                                accountId,
+                                val,
+                                Guid.NewGuid(),
+                                Guid.Empty));
+                        }
+                    }
+                    catch (ArgumentOutOfRangeException e)
+                    {
+                        Console.WriteLine(e.Message.Split('\r', '\n')[0]);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Unable to process transaction.");
+                }
+            }
         }
     }
 
