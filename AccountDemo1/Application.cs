@@ -36,9 +36,8 @@ namespace AccountDemo1
 
             var svc = new AccountSvc(_bus, _esRepository);
 
-            var accountId = Guid.Parse("{FDAFEE94-B2C4-4F09-B6BC-7734CE862CA8}");
             _bus.Fire(new CreateAccount(
-                accountId,
+                Constants.AccountId,
                 "TheAccount",
                 Guid.NewGuid(),
                 null));

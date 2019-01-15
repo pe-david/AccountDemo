@@ -12,9 +12,7 @@ namespace AccountDemo1
 {
     public class AccountSvc : IHandleCommand<CreateAccount>
     {
-        private readonly Guid accountGuid = Guid.Parse("{FDAFEE94-B2C4-4F09-B6BC-7734CE862CA8}");
-
-        private Account account;
+        private Account _account;
         private readonly IRepository _repo;
         private readonly ICommandBus _bus;
 
@@ -53,34 +51,34 @@ namespace AccountDemo1
 
         public void GetOrCreateAccount()
         {
-            //try
-            //{
-            //    account = _repo.GetById<Account>(accountGuid);
-            //    return;
-            //}
-            //catch
-            //{
-            //}
+            try
+            {
+                _account = _repo.GetById<Account>(Constants.AccountId);
+                return;
+            }
+            catch
+            {
+            }
 
-            account = new Account(
-                accountGuid,
+            _account = new Account(
+                Constants.AccountId,
                 "TheAccount",
                 Guid.NewGuid(),
                 Guid.Empty);
 
-            _repo.Save(account, accountGuid);
+            _repo.Save(_account, Constants.AccountId);
         }
 
         public CommandResponse Handle(CreateAccount command)
         {
-            account = new Account(
+            _account = new Account(
             command.AccountId,
             command.Name,
             command.CorrelationId,
             command.SourceId);
 
             var commitId = Guid.NewGuid();
-            _repo.Save(account, commitId);
+            _repo.Save(_account, commitId);
             return command.Succeed();
         }
     }

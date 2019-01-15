@@ -26,6 +26,7 @@ namespace AccountDemo1
             Ensure.NotNullOrEmpty(name, "name");
             Ensure.NotEmptyGuid(correlationId, "correlationId");
 
+            Id = accountId;
             RaiseEvent(new AccountCreated(
                 accountId,
                 name,

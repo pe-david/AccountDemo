@@ -145,6 +145,7 @@
     <Compile Include="Account.cs" />
     <Compile Include="AccountSvc.cs" />
     <Compile Include="Application.cs" />
+    <Compile Include="Constants.cs" />
     <Compile Include="CreditTransaction.cs" />
     <Compile Include="DebitTransaction.cs" />
     <Compile Include="Messages\AccountCreated.cs" />
