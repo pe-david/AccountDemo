@@ -12,6 +12,7 @@ namespace AccountDemo1.Messages
     {
         private static readonly int TypeId = Interlocked.Increment(ref NextMsgId);
         public override int MsgTypeId => TypeId;
+
         public readonly Guid AccountId;
         public readonly string Name;
 

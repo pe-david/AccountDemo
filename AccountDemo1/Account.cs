@@ -20,18 +20,17 @@ namespace AccountDemo1
             Guid accountId,
             string name,
             Guid correlationId,
-            Guid sourceId) : this()
+            Guid? sourceId) : this()
         {
             Ensure.NotEmptyGuid(accountId, "studyId");
             Ensure.NotNullOrEmpty(name, "name");
             Ensure.NotEmptyGuid(correlationId, "correlationId");
-            Ensure.NotEmptyGuid(sourceId, "sourceId");
 
             RaiseEvent(new AccountCreated(
                 accountId,
                 name,
-                correlationId,
-                sourceId));
+                Guid.NewGuid(),
+                correlationId));
         }
 
         public Account()

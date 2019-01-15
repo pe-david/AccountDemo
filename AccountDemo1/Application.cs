@@ -40,8 +40,8 @@ namespace AccountDemo1
             _bus.Fire(new CreateAccount(
                 accountId,
                 "TheAccount",
-                new Guid(),
-                Guid.Empty));
+                Guid.NewGuid(),
+                null));
 
             //while (true)
             //{

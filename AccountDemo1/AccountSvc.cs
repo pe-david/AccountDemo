@@ -65,15 +65,22 @@ namespace AccountDemo1
             account = new Account(
                 accountGuid,
                 "TheAccount",
-                new Guid(),
-                new Guid());
+                Guid.NewGuid(),
+                Guid.Empty);
 
             _repo.Save(account, accountGuid);
         }
 
         public CommandResponse Handle(CreateAccount command)
         {
-            Console.WriteLine("got here!!!");
+            account = new Account(
+            command.AccountId,
+            command.Name,
+            command.CorrelationId,
+            command.SourceId);
+
+            var commitId = Guid.NewGuid();
+            _repo.Save(account, commitId);
             return command.Succeed();
         }
     }
