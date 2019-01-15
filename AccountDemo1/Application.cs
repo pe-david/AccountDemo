@@ -49,7 +49,12 @@ namespace AccountDemo1
                     {
                         if (val < 0)
                         {
-                            //_bus.Fire(new DebitTransaction(val));
+                            val *= -1;
+                            _bus.Fire(new ApplyDebit(
+                                accountId,
+                                val,
+                                Guid.NewGuid(),
+                                Guid.Empty));
                         }
                         else
                         {

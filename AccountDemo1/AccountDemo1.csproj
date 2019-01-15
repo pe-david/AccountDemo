@@ -148,6 +148,8 @@
     <Compile Include="CreditTransaction.cs" />
     <Compile Include="DebitTransaction.cs" />
     <Compile Include="Messages\AccountCreated.cs" />
+    <Compile Include="Messages\DebitApplied.cs" />
+    <Compile Include="Messages\ApplyDebit.cs" />
     <Compile Include="Messages\CreateAccount.cs" />
     <Compile Include="Messages\ApplyCredit.cs" />
     <Compile Include="Messages\CreditApplied.cs" />

@@ -28,6 +28,8 @@ namespace AccountDemo1
                 name,
                 Guid.NewGuid(),
                 correlationId));
+
+            Console.WriteLine($"Account created: {name}");
         }
 
         public Account()
@@ -39,32 +41,48 @@ namespace AccountDemo1
         {
             Register<AccountCreated>(Apply);
             Register<CreditApplied>(Apply);
+            Register<DebitApplied>(Apply);
+        }
+
+        private void Apply(DebitApplied @event)
+        {
+            Balance -= @event.Amount;
         }
 
         private void Apply(CreditApplied @event)
         {
             Balance += @event.Amount;
-            Console.WriteLine($"Credit Applied: {@event.Amount}");
-
         }
 
         private void Apply(AccountCreated @event)
         {
             Id = @event.AccountId;
-            Console.WriteLine($"Account created: {@event.Name}");
         }
 
         public double Balance { get; private set; }
 
-        public void ApplyCredit(double amount, Guid corrId, Guid sourceId )
+        public void ApplyCredit(double amount, Guid corrId, Guid sourceId)
         {
-            //Balance += amount;
-
             RaiseEvent(new CreditApplied(
                 Id,
                 amount,
                 corrId,
                 sourceId: sourceId));
+
+            Console.WriteLine($"Credit Applied: {amount}");
+            WriteBalance();
+        }
+
+        public void ApplyDebit(double amount, Guid corrId, Guid sourceId)
+        {
+            RaiseEvent(new DebitApplied(
+                Id,
+                amount,
+                corrId,
+                sourceId: sourceId));
+
+            Console.WriteLine($"Debit Applied: {amount}");
+            WriteBalance();
         }
 
         public void WriteBalance()

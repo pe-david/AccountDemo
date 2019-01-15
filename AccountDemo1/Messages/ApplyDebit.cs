@@ -4,7 +4,7 @@ using System.Threading;
 
 namespace AccountDemo1.Messages
 {
-    public class ApplyCredit : Command
+    public class ApplyDebit : Command
     {
         private static readonly int TypeId = Interlocked.Increment(ref NextMsgId);
         public override int MsgTypeId => TypeId;
@@ -12,7 +12,7 @@ namespace AccountDemo1.Messages
         public readonly Guid AccountId;
         public readonly double Amount;
 
-        public ApplyCredit(
+        public ApplyDebit(
             Guid accountId,
             double amount,
             Guid correlationId,

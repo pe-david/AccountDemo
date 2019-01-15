@@ -8,7 +8,8 @@ namespace AccountDemo1
 {
     public class AccountSvc : 
         IHandleCommand<CreateAccount>,
-        IHandleCommand<ApplyCredit>
+        IHandleCommand<ApplyCredit>,
+        IHandleCommand<ApplyDebit>
     {
         private readonly IRepository _repo;
         private readonly ICommandBus _bus;
@@ -20,8 +21,7 @@ namespace AccountDemo1
 
             _bus.Subscribe<CreateAccount>(this);
             _bus.Subscribe<ApplyCredit>(this);
-
-            //var test = _repo.GetById<Account>(Guid.Parse("{b3a325b7-7cb0-448d-9af1-4f3578c0eaef}"));
+            _bus.Subscribe<ApplyDebit>(this);
         }
 
 
@@ -42,6 +42,15 @@ namespace AccountDemo1
         {
             var account = _repo.GetById<Account>(command.AccountId);
             account.ApplyCredit(command.Amount, command.CorrelationId, command.MsgId);
+
+            _repo.Save(account, Guid.NewGuid());
+            return command.Succeed();
+        }
+
+        public CommandResponse Handle(ApplyDebit command)
+        {
+            var account = _repo.GetById<Account>(command.AccountId);
+            account.ApplyDebit(command.Amount, command.CorrelationId, command.MsgId);
 
             _repo.Save(account, Guid.NewGuid());
             return command.Succeed();
