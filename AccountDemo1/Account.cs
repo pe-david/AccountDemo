@@ -16,18 +16,18 @@ namespace AccountDemo1
             Guid accountId,
             string name,
             Guid correlationId,
-            Guid? sourceId) : base()
+            Guid sourceId) : base()
         {
-            Ensure.NotEmptyGuid(accountId, "studyId");
+            Ensure.NotEmptyGuid(accountId, "accountId");
             Ensure.NotNullOrEmpty(name, "name");
             Ensure.NotEmptyGuid(correlationId, "correlationId");
+            Ensure.NotEmptyGuid(sourceId, "sourceId");
 
-            Id = accountId;
             RaiseEvent(new AccountCreated(
                 accountId,
                 name,
-                Guid.NewGuid(),
-                correlationId));
+                correlationId,
+                sourceId));
 
             Console.WriteLine($"Account created: {name}");
         }
