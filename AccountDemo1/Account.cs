@@ -7,11 +7,6 @@ namespace AccountDemo1
 {
     public class Account : AggregateBase
     {
-        //public Account()
-        //{
-        //    Console.WriteLine("Initial balance: $0.00");
-        //}
-
         public Account(
             Guid accountId,
             string name,
