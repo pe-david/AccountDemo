@@ -17,6 +17,7 @@ namespace AccountDemo1
             Ensure.NotNullOrEmpty(name, "name");
             Ensure.NotEmptyGuid(correlationId, "correlationId");
             Ensure.NotEmptyGuid(sourceId, "sourceId");
+            Id = accountId;
 
             RaiseEvent(new AccountCreated(
                 accountId,
@@ -24,7 +25,7 @@ namespace AccountDemo1
                 correlationId,
                 sourceId));
 
-            Console.WriteLine($"Account created: {name}");
+            Console.WriteLine($"Account created: {name}, {Id}");
         }
 
         public Account()
@@ -64,7 +65,7 @@ namespace AccountDemo1
                 corrId,
                 sourceId: sourceId));
 
-            Console.WriteLine($"Credit Applied: {amount}");
+            //Console.WriteLine($"Credit Applied: {amount}");
             WriteBalance();
         }
 
@@ -76,7 +77,7 @@ namespace AccountDemo1
                 corrId,
                 sourceId: sourceId));
 
-            Console.WriteLine($"Debit Applied: {amount}");
+            //Console.WriteLine($"Debit Applied: {amount}");
             WriteBalance();
         }
 

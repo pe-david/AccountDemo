@@ -4,6 +4,8 @@ using ReactiveDomain.Bus;
 using ReactiveDomain.EventStore;
 using System;
 using System.IO;
+using ReactiveDomain.Domain;
+using Splat;
 
 namespace AccountDemo1
 {
@@ -11,8 +13,10 @@ namespace AccountDemo1
     {
         private EventStoreLoader _es;
         private GetEventStoreRepository _esRepository;
-        private ICommandBus _bus;
+        private IGeneralBus _bus;
         public IEventStoreConnection EsConnection { get; private set; }
+
+        private AccountRM _accountReadModel;
 
         public void Bootstrap()
         {
@@ -20,7 +24,9 @@ namespace AccountDemo1
             _es.SetupEventStore(new DirectoryInfo(@"C:\Users\rosed18169\source\EventStore-OSS-Win-v3.9.4"));
             EsConnection = _es.Connection;
             _esRepository = new GetEventStoreRepository(_es.Connection);
+            Locator.CurrentMutable.RegisterConstant(_esRepository, typeof(IRepository));
             _bus = new CommandBus("testBus", false);
+
         }
 
         public void Run()
@@ -28,12 +34,15 @@ namespace AccountDemo1
             Console.WriteLine("Hit return on an empty line to cancel...");
             Console.WriteLine("Enter a value. Negative values are debits, positive are credits.");
             var accountId = Guid.NewGuid();
+
             var svc = new AccountSvc(_bus, _esRepository);
             _bus.Fire(new CreateAccount(
                                 accountId,
                                 "TheAccount",
                                 Guid.NewGuid(),
                                 Guid.Empty));
+
+            _accountReadModel = new AccountRM(_bus, accountId);
 
             while (true)
             {
@@ -59,10 +68,11 @@ namespace AccountDemo1
                         else
                         {
                             _bus.Fire(new ApplyCredit(
-                                accountId,
-                                val,
-                                Guid.NewGuid(),
-                                Guid.Empty));
+                                            accountId,
+                                            val,
+                                            Guid.NewGuid(),
+                                            Guid.Empty),
+                                responseTimeout: TimeSpan.FromSeconds(60));
                         }
                     }
                     catch (ArgumentOutOfRangeException e)
