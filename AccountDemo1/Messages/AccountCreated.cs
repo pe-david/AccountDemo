@@ -11,10 +11,12 @@ namespace AccountDemo1.Messages
 
         public readonly Guid AccountId;
         public readonly string Name;
+        public readonly double Balance;
 
         public AccountCreated(
             Guid accountId,
             string name,
+            double balance,
             Guid correlationId,
             Guid sourceId) : base(correlationId, sourceId)
         {

@@ -14,9 +14,8 @@ namespace AccountDemo1
         private EventStoreLoader _es;
         private GetEventStoreRepository _esRepository;
         private IGeneralBus _bus;
-        public IEventStoreConnection EsConnection { get; private set; }
-
         private AccountRM _accountReadModel;
+        public IEventStoreConnection EsConnection { get; private set; }
 
         public void Bootstrap()
         {
@@ -42,7 +41,7 @@ namespace AccountDemo1
                                 Guid.NewGuid(),
                                 Guid.Empty));
 
-            _accountReadModel = new AccountRM(_bus, accountId);
+            _accountReadModel = new AccountRM(accountId);
 
             while (true)
             {

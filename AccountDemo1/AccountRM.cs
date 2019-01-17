@@ -8,42 +8,51 @@ using Splat;
 
 namespace AccountDemo1
 {
-    public class AccountRM : TransientSubscriber,
+    public class AccountRM : ReadModelBase,
                              IHandle<AccountCreated>,
-                             IHandle<CreditApplied>
-                             //IHandle<DebitApplied>
+                             IHandle<CreditApplied>,
+                             IHandle<DebitApplied>
     {
-        private Guid _accountId;
-        
-        private IListener _listener;
-        public AccountRM(
-               ISubscriber bus,
-               Guid accountId) : base(bus)
+        private double balance;
+
+        public AccountRM(Guid accountId)
+            : base(() =>
+                Locator
+                    .Current
+                    .GetService<IRepository>()
+                    .GetListener(
+                        $"ImageCache: account-{accountId:N}",
+                        true))
         {
-            _accountId = accountId;
+            EventStream.Subscribe<AccountCreated>(this);
+            EventStream.Subscribe<CreditApplied>(this);
+            EventStream.Subscribe<DebitApplied>(this);
 
-            _listener = Locator.Current.GetService<IRepository>().GetListener($"ImageCache: account-{_accountId:N}", true);
-
-            _listener.EventStream.Subscribe<AccountCreated>(this);
-            _listener.EventStream.Subscribe<CreditApplied>(this);
-            //_listener.EventStream.Subscribe<DebitApplied>(this);
-
-            _listener.Start<Account>(_accountId, null,  true);
-        }
-
-        public void Handle(DebitApplied message)
-        {
-            Console.WriteLine("DebitApplied - Got here!!!!!!");
+            Start<Account>(accountId, null,  true);
         }
 
         public void Handle(AccountCreated message)
         {
-            Console.WriteLine("Got here!!!!!!");
+            balance = message.Balance;
+            Console.WriteLine();
+            Console.WriteLine($"Account created: {message.Name}, {message.AccountId}");
+            Console.WriteLine($"Initial balance: ${message.Balance:0.00}");
         }
 
         public void Handle(CreditApplied message)
         {
-            Console.WriteLine("CreditApplied - Got here!!!!!!");
+            balance += message.Amount;
+            Console.WriteLine();
+            Console.WriteLine($"CreditApplied: ${message.Amount:0.00}");
+            Console.WriteLine($"Balance: ${balance:0.00}");
+        }
+
+        public void Handle(DebitApplied message)
+        {
+            balance -= message.Amount;
+            Console.WriteLine();
+            Console.WriteLine($"DebitApplied: ${message.Amount:0.00}");
+            Console.WriteLine($"Balance: ${balance:0.00}");
         }
     }
 }

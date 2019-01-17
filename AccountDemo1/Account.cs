@@ -22,10 +22,9 @@ namespace AccountDemo1
             RaiseEvent(new AccountCreated(
                 accountId,
                 name,
+                Balance,
                 correlationId,
                 sourceId));
-
-            Console.WriteLine($"Account created: {name}, {Id}");
         }
 
         public Account()
@@ -64,9 +63,6 @@ namespace AccountDemo1
                 amount,
                 corrId,
                 sourceId: sourceId));
-
-            //Console.WriteLine($"Credit Applied: {amount}");
-            WriteBalance();
         }
 
         public void ApplyDebit(double amount, Guid corrId, Guid sourceId)
@@ -76,14 +72,6 @@ namespace AccountDemo1
                 amount,
                 corrId,
                 sourceId: sourceId));
-
-            //Console.WriteLine($"Debit Applied: {amount}");
-            WriteBalance();
-        }
-
-        public void WriteBalance()
-        {
-            Console.WriteLine($"Balance: ${Balance:0.00}");
         }
     }
 }
