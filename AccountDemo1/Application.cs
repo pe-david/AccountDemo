@@ -11,30 +11,31 @@ namespace AccountDemo1
 {
     public class Application
     {
-        private EventStoreLoader _es;
-        private GetEventStoreRepository _esRepository;
+        //private EventStoreLoader _es;
+        //private GetEventStoreRepository _esRepository;
         private IGeneralBus _bus;
         private AccountRM _accountReadModel;
-        public IEventStoreConnection EsConnection { get; private set; }
+        //public IEventStoreConnection EsConnection { get; private set; }
 
-        public void Bootstrap()
-        {
-            _es = new EventStoreLoader();
-            _es.SetupEventStore(new DirectoryInfo(@"C:\Users\rosed18169\source\EventStore-OSS-Win-v3.9.4"));
-            EsConnection = _es.Connection;
-            _esRepository = new GetEventStoreRepository(_es.Connection);
-            Locator.CurrentMutable.RegisterConstant(_esRepository, typeof(IRepository));
-            _bus = new CommandBus("testBus", false);
+        //public void Bootstrap()
+        //{
+        //    _es = new EventStoreLoader();
+        //    _es.SetupEventStore(new DirectoryInfo(@"C:\Users\rosed18169\source\EventStore-OSS-Win-v3.9.4"));
+        //    EsConnection = _es.Connection;
+        //    _esRepository = new GetEventStoreRepository(_es.Connection);
+        //    Locator.CurrentMutable.RegisterConstant(_esRepository, typeof(IRepository));
+        //    _bus = new CommandBus("testBus", false);
 
-        }
+        //}
 
         public void Run()
         {
             Console.WriteLine("Hit return on an empty line to cancel...");
             Console.WriteLine("Enter a value. Negative values are debits, positive are credits.");
             var accountId = Guid.NewGuid();
-
-            var svc = new AccountSvc(_bus, _esRepository);
+            _bus = new CommandBus("testBus", false);
+            Bootstrap.Configure(_bus);
+            //var svc = new AccountSvc(_bus, _esRepository);
             _bus.Fire(new CreateAccount(
                                 accountId,
                                 "TheAccount",

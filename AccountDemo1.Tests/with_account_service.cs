@@ -1,15 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using EventStore.ClientAPI;
-using ReactiveDomain.Bus;
-using ReactiveDomain.Domain;
-using ReactiveDomain.EventStore;
-using ReactiveDomain.Tests.Specifications;
-using Splat;
+﻿using ReactiveDomain.Tests.Specifications;
+using System;
 
 namespace AccountDemo1.Tests
 {
@@ -17,12 +7,17 @@ namespace AccountDemo1.Tests
     public abstract class with_account_service : MockRepositorySpecification, IDisposable
     {
         private bool _disposed;
-        protected AccountSvc acctSvc;
+        protected AccountSvc AcctSvc;
 
+        static with_account_service()
+        {
+            Bootstrap.Load();
+        }
 
         protected override void Given()
         {
-
+            base.Given();
+            AcctSvc = new AccountSvc(Bus, Repository);
         }
 
         public void Dispose()

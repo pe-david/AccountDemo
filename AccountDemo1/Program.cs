@@ -7,7 +7,6 @@ namespace AccountDemo1
         static void Main(string[] args)
         {
             var app = new Application();
-            app.Bootstrap();
             app.Run();
 
             Console.ReadKey();
