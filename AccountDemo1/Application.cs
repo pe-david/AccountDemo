@@ -86,22 +86,4 @@ namespace AccountDemo1
             }
         }
     }
-
-
-    //IEventStoreConnection esConnection = EventStoreConnection.Create("ConnectTo=tcp://admin:changeit@localhost:1113");
-    //conn = new EventStoreConnectionWrapper(esConnection);
-    //esConnection.Connected += (_, __) => Console.WriteLine("Connected");
-    //esConnection.ConnectAsync().Wait();
-    //IStreamNameBuilder namer = new PrefixedCamelCaseStreamNameBuilder();
-    //IEventSerializer ser = new JsonMessageSerializer();
-    //repo = new StreamStoreRepository(namer, conn, ser);
-    //Account acct = null;
-    //try
-    //{
-    //    repo.Save(new Account(_accountId));
-    //}
-    //catch (Exception e)
-    //{
-    //}
-    //IListener listener = new StreamListener("Account", conn, namer, ser);
 }
