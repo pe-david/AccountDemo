@@ -9,7 +9,8 @@ namespace AccountDemo1.Tests
     public sealed class when_manipulating_account :
                         with_account_service,
                         IHandle<AccountCreated>,
-                        IHandle<CreditApplied>
+                        IHandle<CreditApplied>,
+                        IHandle<DebitApplied>
     {
         protected override void When()
         {
@@ -72,11 +73,48 @@ namespace AccountDemo1.Tests
             Assert.Equal(amountCredited, evt.Amount);
         }
 
+        [Fact]
+        public void can_apply_debit()
+        {
+            var accountId = Guid.NewGuid();
+            var correlationId = Guid.NewGuid();
+            Bus.Fire(
+                new CreateAccount(
+                    accountId,
+                    "NewAccount",
+                    correlationId,
+                    null),
+                responseTimeout: TimeSpan.FromMilliseconds(3000));
+
+            const double amountDebited = -123.45;
+            Bus.Fire(new ApplyDebit(
+                    accountId,
+                    amountDebited,
+                    correlationId,
+                    Guid.Empty),
+                responseTimeout: TimeSpan.FromSeconds(60));
+
+            BusCommands.DequeueNext<CreateAccount>();
+            RepositoryEvents.DequeueNext<AccountCreated>();
+
+            BusCommands.AssertNext<ApplyDebit>(correlationId, out var cmd)
+                .AssertEmpty();
+
+            RepositoryEvents.AssertNext<DebitApplied>(correlationId, out var evt)
+                .AssertEmpty();
+
+            Assert.Equal(amountDebited, evt.Amount);
+        }
+
         public void Handle(AccountCreated message)
         {
         }
 
         public void Handle(CreditApplied message)
+        {
+        }
+
+        public void Handle(DebitApplied message)
         {
         }
 
