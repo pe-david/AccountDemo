@@ -20,11 +20,13 @@ namespace AccountDemo1.Tests
         {
             var accountId = Guid.NewGuid();
             var correlationId = Guid.NewGuid();
-            Bus.Fire(new CreateAccount(
-                accountId,
-                "NewAccount",
-                 correlationId,
-                null));
+            Bus.Fire(
+                new CreateAccount(
+                        accountId,
+                        "NewAccount",
+                         correlationId,
+                        null),
+                responseTimeout: TimeSpan.FromMilliseconds(1500));
 
             BusCommands.AssertNext<CreateAccount>(correlationId, out var cmd)
                        .AssertEmpty();
