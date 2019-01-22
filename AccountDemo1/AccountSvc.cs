@@ -7,21 +7,21 @@ using System;
 namespace AccountDemo1
 {
     public class AccountSvc : 
+        TransientSubscriber,
         IHandleCommand<CreateAccount>,
         IHandleCommand<ApplyCredit>,
         IHandleCommand<ApplyDebit>
     {
         private readonly IRepository _repo;
-        private readonly ICommandBus _bus;
 
-        public AccountSvc(ICommandBus bus, IRepository repo)
+        public AccountSvc(IGeneralBus bus, IRepository repo)
+            : base(bus)
         {
             _repo = repo;
-            _bus = bus;
 
-            _bus.Subscribe<CreateAccount>(this);
-            _bus.Subscribe<ApplyCredit>(this);
-            _bus.Subscribe<ApplyDebit>(this);
+            bus.Subscribe<CreateAccount>(this);
+            bus.Subscribe<ApplyCredit>(this);
+            bus.Subscribe<ApplyDebit>(this);
         }
 
 
