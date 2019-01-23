@@ -85,6 +85,25 @@ namespace AccountDemo1.Tests
         }
 
         [Fact]
+        public void cannot_create_account_with_empty_correlation_id()
+        {
+            var accountId = Guid.NewGuid();
+            var correlationId = Guid.Empty;
+
+            Assert.Throws<CommandException>(
+                () =>
+                {
+                    Bus.Fire(
+                        new CreateAccount(
+                            accountId,
+                            "NewAccount",
+                            correlationId,
+                            null),
+                        responseTimeout: TimeSpan.FromMilliseconds(1500));
+                });
+        }
+
+        [Fact]
         public void can_apply_credit()
         {
             var accountId = Guid.NewGuid();
@@ -144,6 +163,33 @@ namespace AccountDemo1.Tests
         }
 
         [Fact]
+        public void cannot_apply_credit_with_empty_correlation_id()
+        {
+            var accountId = Guid.NewGuid();
+            var correlationId = Guid.NewGuid();
+            Bus.Fire(
+                new CreateAccount(
+                    accountId,
+                    "NewAccount",
+                    correlationId,
+                    null),
+                responseTimeout: TimeSpan.FromMilliseconds(3000));
+
+            const double amountCredited = 123.45;
+            Assert.Throws<CommandException>(
+                () =>
+                {
+                    Bus.Fire(
+                        new ApplyCredit(
+                            accountId,
+                            amountCredited,
+                            Guid.Empty, 
+                            Guid.Empty),
+                        responseTimeout: TimeSpan.FromSeconds(60));
+                });
+        }
+
+        [Fact]
         public void cannot_apply_debit_with_empty_account_id()
         {
             var accountId = Guid.NewGuid();
@@ -164,6 +210,33 @@ namespace AccountDemo1.Tests
                             Guid.Empty,
                             amountDebited,
                             correlationId,
+                            Guid.Empty),
+                        responseTimeout: TimeSpan.FromSeconds(60));
+                });
+        }
+
+        [Fact]
+        public void cannot_apply_debit_with_empty_correlation_id()
+        {
+            var accountId = Guid.NewGuid();
+            var correlationId = Guid.NewGuid();
+            Bus.Fire(
+                new CreateAccount(
+                    accountId,
+                    "NewAccount",
+                    correlationId,
+                    null),
+                responseTimeout: TimeSpan.FromMilliseconds(3000));
+
+            const double amountCredited = 123.45;
+            Assert.Throws<CommandException>(
+                () =>
+                {
+                    Bus.Fire(
+                        new ApplyDebit(
+                            accountId,
+                            amountCredited,
+                            Guid.Empty,
                             Guid.Empty),
                         responseTimeout: TimeSpan.FromSeconds(60));
                 });

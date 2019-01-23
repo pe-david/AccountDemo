@@ -30,7 +30,12 @@ namespace AccountDemo1
         {
             if (command.AccountId.IsSameOrEqualTo(Guid.Empty))
             {
-                throw new InvalidOperationException("Cannot create an account with an empty id.");
+                throw new InvalidOperationException("Cannot create an account with an empty account id.");
+            }
+
+            if (command.CorrelationId.IsSameOrEqualTo(Guid.Empty))
+            {
+                throw new InvalidOperationException("Cannot create an account with an empty correlation id.");
             }
 
             if (_repo.TryGetById<Account>(command.AccountId, out var existing))
@@ -56,6 +61,11 @@ namespace AccountDemo1
                 throw new InvalidOperationException("Cannot apply a credit with an empty account id.");
             }
 
+            if (command.CorrelationId.IsSameOrEqualTo(Guid.Empty))
+            {
+                throw new InvalidOperationException("Cannot apply a credit with an empty correlation id.");
+            }
+
             if (!_repo.TryGetById<Account>(command.AccountId, out var account))
             {
                 throw new InvalidOperationException($"ApplyCredit: Account {{{command.AccountId}}} not found.");
@@ -72,6 +82,11 @@ namespace AccountDemo1
             if (command.AccountId.IsSameOrEqualTo(Guid.Empty))
             {
                 throw new InvalidOperationException("Cannot apply a debit with an empty account id.");
+            }
+
+            if (command.CorrelationId.IsSameOrEqualTo(Guid.Empty))
+            {
+                throw new InvalidOperationException("Cannot apply a debit with an empty correlation id.");
             }
 
             if (!_repo.TryGetById<Account>(command.AccountId, out var account))
