@@ -99,6 +99,58 @@ namespace AccountDemo1.Tests
         }
 
         [Fact]
+        public void cannot_apply_debit_with_wrong_id()
+        {
+            var accountId = Guid.NewGuid();
+            var correlationId = Guid.NewGuid();
+            Bus.Fire(
+                new CreateAccount(
+                    accountId,
+                    "NewAccount",
+                    correlationId,
+                    null),
+                responseTimeout: TimeSpan.FromMilliseconds(3000));
+
+            const double amountDebited = 123.45;
+            Assert.Throws<CommandException>(
+                () =>
+                {
+                    Bus.Fire(new ApplyCredit(
+                            Guid.NewGuid(),
+                            amountDebited,
+                            correlationId,
+                            Guid.Empty),
+                        responseTimeout: TimeSpan.FromSeconds(60));
+                });
+        }
+
+        [Fact]
+        public void cannot_apply_credit_with_wrong_id()
+        {
+            var accountId = Guid.NewGuid();
+            var correlationId = Guid.NewGuid();
+            Bus.Fire(
+                new CreateAccount(
+                    accountId,
+                    "NewAccount",
+                    correlationId,
+                    null),
+                responseTimeout: TimeSpan.FromMilliseconds(3000));
+
+            const double amountCredited = 123.45;
+            Assert.Throws<CommandException>(
+                () =>
+                {
+                    Bus.Fire(new ApplyCredit(
+                            Guid.NewGuid(),
+                            amountCredited,
+                            correlationId,
+                            Guid.Empty),
+                        responseTimeout: TimeSpan.FromSeconds(60));
+                });
+        }
+
+        [Fact]
         public void can_apply_debit()
         {
             var accountId = Guid.NewGuid();

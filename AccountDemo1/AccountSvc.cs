@@ -45,7 +45,11 @@ namespace AccountDemo1
 
         public CommandResponse Handle(ApplyCredit command)
         {
-            var account = _repo.GetById<Account>(command.AccountId);
+            if (!_repo.TryGetById<Account>(command.AccountId, out var account))
+            {
+                throw new InvalidOperationException($"ApplyCredit: Account {{{command.AccountId}}} not found.");
+            }
+
             account.ApplyCredit(command.AccountId, command.Amount, command.CorrelationId, command.MsgId);
 
             _repo.Save(account, Guid.NewGuid());
@@ -54,7 +58,11 @@ namespace AccountDemo1
 
         public CommandResponse Handle(ApplyDebit command)
         {
-            var account = _repo.GetById<Account>(command.AccountId);
+            if (!_repo.TryGetById<Account>(command.AccountId, out var account))
+            {
+                throw new InvalidOperationException($"ApplyDebit: Account {{{command.AccountId}}} not found.");
+            }
+
             account.ApplyDebit(command.AccountId, command.Amount, command.CorrelationId, command.MsgId);
 
             _repo.Save(account, Guid.NewGuid());
