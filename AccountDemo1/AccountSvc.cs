@@ -27,6 +27,10 @@ namespace AccountDemo1
 
         public CommandResponse Handle(CreateAccount command)
         {
+            //if (_repo.TryGetById<Account>(command.AccountId))
+            //{
+            //}
+
             var account = new Account(
                                 command.AccountId,
                                 command.Name,

@@ -18,6 +18,11 @@ namespace AccountDemo1.Messages
             Guid correlationId,
             Guid? sourceId) : base(correlationId, sourceId)
         {
+            if (amount < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(accountId), "Cannot enter an amount that is < 0.");
+            }
+
             AccountId = accountId;
             Amount = amount;
         }

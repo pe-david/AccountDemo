@@ -107,6 +107,58 @@ namespace AccountDemo1.Tests
         }
 
         [Fact]
+        public void cannot_debit_a_negative_amount()
+        {
+            var accountId = Guid.NewGuid();
+            var correlationId = Guid.NewGuid();
+            Bus.Fire(
+                new CreateAccount(
+                    accountId,
+                    "NewAccount",
+                    correlationId,
+                    null),
+                responseTimeout: TimeSpan.FromMilliseconds(3000));
+
+            const double amountDebited = -123.45;
+            Assert.Throws<ArgumentOutOfRangeException>(
+                () =>
+                {
+                    Bus.Fire(new ApplyDebit(
+                            accountId,
+                            amountDebited,
+                            correlationId,
+                            Guid.Empty),
+                        responseTimeout: TimeSpan.FromSeconds(60));
+                });
+        }
+
+        [Fact]
+        public void cannot_credit_a_negative_amount()
+        {
+            var accountId = Guid.NewGuid();
+            var correlationId = Guid.NewGuid();
+            Bus.Fire(
+                new CreateAccount(
+                    accountId,
+                    "NewAccount",
+                    correlationId,
+                    null),
+                responseTimeout: TimeSpan.FromMilliseconds(3000));
+
+            const double amountCredited = -123.45;
+            Assert.Throws<ArgumentOutOfRangeException>(
+                () =>
+                {
+                    Bus.Fire(new ApplyCredit(
+                            accountId,
+                            amountCredited,
+                            correlationId,
+                            Guid.Empty),
+                        responseTimeout: TimeSpan.FromSeconds(60));
+                });
+        }
+
+        [Fact]
         public void debit_fails_when_wrong_account_id()
         {
             var accountId = Guid.NewGuid();
