@@ -72,6 +72,12 @@ namespace AccountDemo1
             Ensure.NotEmptyGuid(accountId, nameof(accountId));
             Ensure.Equal(Id.GetHashCode(), accountId.GetHashCode(), nameof(accountId));
 
+            var newBalance = Balance - amount;
+            if (newBalance < 0)
+            {
+                throw new InvalidOperationException("Balance cannot be below 0.");
+            }
+
             RaiseEvent(new DebitApplied(
                 Id,
                 amount,

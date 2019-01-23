@@ -37,6 +37,8 @@ namespace AccountDemo1
             Console.WriteLine();
             Console.WriteLine($"Account created: {message.Name}, {message.AccountId}");
             Console.WriteLine($"Initial balance: ${message.Balance:0.00}");
+            Console.WriteLine("Enter cr <amount> to enter a credit.");
+            Console.WriteLine("Enter db <amount> to enter a debit.");
         }
 
         public void Handle(CreditApplied message)

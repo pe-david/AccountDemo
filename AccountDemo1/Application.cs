@@ -73,6 +73,11 @@ namespace AccountDemo1
                             responseTimeout: TimeSpan.FromSeconds(60));
                     }
                 }
+                catch (CommandException e)
+                {
+                    var msg = e.InnerException == null ? e.Message : e.InnerException.Message;
+                    Console.WriteLine(msg);
+                }
                 catch (InvalidOperationException ex)
                 {
                     Console.WriteLine(ex.Message);
