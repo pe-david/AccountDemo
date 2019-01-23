@@ -28,14 +28,14 @@ namespace AccountDemo1
 
         public CommandResponse Handle(CreateAccount command)
         {
-            if (_repo.TryGetById<Account>(command.AccountId, out var existing))
-            {
-                throw new InvalidOperationException("Cannot create an account with a duplicate account id.");
-            }
-
             if (command.AccountId.IsSameOrEqualTo(Guid.Empty))
             {
                 throw new InvalidOperationException("Cannot create an account with an empty id.");
+            }
+
+            if (_repo.TryGetById<Account>(command.AccountId, out var existing))
+            {
+                throw new InvalidOperationException("Cannot create an account with a duplicate account id.");
             }
 
             var account = new Account(
@@ -51,6 +51,11 @@ namespace AccountDemo1
 
         public CommandResponse Handle(ApplyCredit command)
         {
+            if (command.AccountId.IsSameOrEqualTo(Guid.Empty))
+            {
+                throw new InvalidOperationException("Cannot apply a credit with an empty account id.");
+            }
+
             if (!_repo.TryGetById<Account>(command.AccountId, out var account))
             {
                 throw new InvalidOperationException($"ApplyCredit: Account {{{command.AccountId}}} not found.");
@@ -64,6 +69,11 @@ namespace AccountDemo1
 
         public CommandResponse Handle(ApplyDebit command)
         {
+            if (command.AccountId.IsSameOrEqualTo(Guid.Empty))
+            {
+                throw new InvalidOperationException("Cannot apply a debit with an empty account id.");
+            }
+
             if (!_repo.TryGetById<Account>(command.AccountId, out var account))
             {
                 throw new InvalidOperationException($"ApplyDebit: Account {{{command.AccountId}}} not found.");
