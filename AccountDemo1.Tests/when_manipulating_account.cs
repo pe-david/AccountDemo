@@ -86,7 +86,7 @@ namespace AccountDemo1.Tests
                     null),
                 responseTimeout: TimeSpan.FromMilliseconds(3000));
 
-            const double amountDebited = -123.45;
+            const double amountDebited = 123.45;
             Bus.Fire(new ApplyDebit(
                     accountId,
                     amountDebited,
@@ -104,6 +104,32 @@ namespace AccountDemo1.Tests
                 .AssertEmpty();
 
             Assert.Equal(amountDebited, evt.Amount);
+        }
+
+        [Fact]
+        public void debit_fails_when_wrong_account_id()
+        {
+            var accountId = Guid.NewGuid();
+            var correlationId = Guid.NewGuid();
+            Bus.Fire(
+                new CreateAccount(
+                    accountId,
+                    "NewAccount",
+                    correlationId,
+                    null),
+                responseTimeout: TimeSpan.FromMilliseconds(3000));
+
+            const double amountDebited = 123.45;
+            Assert.Throws<CommandException>(
+                () =>
+                {
+                    Bus.Fire(new ApplyDebit(
+                            Guid.NewGuid(),
+                            amountDebited,
+                            correlationId,
+                            Guid.Empty),
+                        responseTimeout: TimeSpan.FromSeconds(60));
+                });
         }
 
         public void Handle(AccountCreated message)
