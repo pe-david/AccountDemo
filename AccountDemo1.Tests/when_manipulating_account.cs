@@ -66,6 +66,25 @@ namespace AccountDemo1.Tests
         }
 
         [Fact]
+        public void cannot_create_account_with_empty_id()
+        {
+            var accountId = Guid.Empty;
+            var correlationId = Guid.NewGuid();
+
+            Assert.Throws<CommandException>(
+                () =>
+                {
+                    Bus.Fire(
+                        new CreateAccount(
+                            accountId,
+                            "NewAccount",
+                            correlationId,
+                            null),
+                        responseTimeout: TimeSpan.FromMilliseconds(1500));
+                });
+        }
+
+        [Fact]
         public void can_apply_credit()
         {
             var accountId = Guid.NewGuid();

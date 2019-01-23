@@ -3,6 +3,7 @@ using ReactiveDomain.Bus;
 using ReactiveDomain.Domain;
 using ReactiveDomain.Messaging;
 using System;
+using FluentAssertions.Common;
 
 namespace AccountDemo1
 {
@@ -30,6 +31,11 @@ namespace AccountDemo1
             if (_repo.TryGetById<Account>(command.AccountId, out var existing))
             {
                 throw new InvalidOperationException("Cannot create an account with a duplicate account id.");
+            }
+
+            if (command.AccountId.IsSameOrEqualTo(Guid.Empty))
+            {
+                throw new InvalidOperationException("Cannot create an account with an empty id.");
             }
 
             var account = new Account(
