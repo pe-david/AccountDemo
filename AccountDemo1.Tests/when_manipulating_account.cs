@@ -307,16 +307,25 @@ namespace AccountDemo1.Tests
                     null),
                 responseTimeout: TimeSpan.FromMilliseconds(3000));
 
-            const double amountDebited = 123.45;
+            const double amount = 123.45;
+            Bus.Fire(new ApplyCredit(
+                    accountId,
+                    amount,
+                    correlationId,
+                    Guid.Empty),
+                responseTimeout: TimeSpan.FromSeconds(60));
+
             Bus.Fire(new ApplyDebit(
                     accountId,
-                    amountDebited,
+                    amount,
                     correlationId,
                     Guid.Empty),
                 responseTimeout: TimeSpan.FromSeconds(60));
 
             BusCommands.DequeueNext<CreateAccount>();
+            BusCommands.DequeueNext<ApplyCredit>();
             RepositoryEvents.DequeueNext<AccountCreated>();
+            RepositoryEvents.DequeueNext<CreditApplied>();
 
             BusCommands.AssertNext<ApplyDebit>(correlationId, out var cmd)
                 .AssertEmpty();
@@ -324,7 +333,7 @@ namespace AccountDemo1.Tests
             RepositoryEvents.AssertNext<DebitApplied>(correlationId, out var evt)
                 .AssertEmpty();
 
-            Assert.Equal(amountDebited, evt.Amount);
+            Assert.Equal(amount, evt.Amount);
         }
 
         [Fact]
@@ -474,14 +483,19 @@ namespace AccountDemo1.Tests
         //    Dispose(true);
         //}
 
-        //protected virtual void Dispose(bool disposing)
+        //private bool _disposed = false;
+        //protected override void Dispose(bool disposing)
         //{
-        //    if (_disposed) return;
-        //    if (disposing)
+        //    if (!_disposed)
         //    {
+        //        if (disposing)
+        //        {
+        //        }
+
+        //        _disposed = true;
         //    }
 
-        //    _disposed = true;
+        //    base.Dispose(disposing);
         //}
     }
 }
