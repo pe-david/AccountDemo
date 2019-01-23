@@ -52,37 +52,30 @@ namespace AccountDemo1
                     break;
                 }
 
-                if (double.TryParse(line, out var val))
+                try
                 {
-                    try
+                    var input = new UserInput(line);
+                    if (input.Type == UserInput.InputType.Debit)
                     {
-                        if (val < 0)
-                        {
-                            val *= -1;
-                            _bus.Fire(new ApplyDebit(
-                                accountId,
-                                val,
-                                Guid.NewGuid(),
-                                Guid.Empty));
-                        }
-                        else
-                        {
-                            _bus.Fire(new ApplyCredit(
-                                            accountId,
-                                            val,
-                                            Guid.NewGuid(),
-                                            Guid.Empty),
-                                responseTimeout: TimeSpan.FromSeconds(60));
-                        }
+                        _bus.Fire(new ApplyDebit(
+                            accountId,
+                            input.Amount,
+                            Guid.NewGuid(),
+                            Guid.Empty));
                     }
-                    catch (ArgumentOutOfRangeException e)
+                    else
                     {
-                        Console.WriteLine(e.Message.Split('\r', '\n')[0]);
+                        _bus.Fire(new ApplyCredit(
+                                accountId,
+                                input.Amount,
+                                Guid.NewGuid(),
+                                Guid.Empty),
+                            responseTimeout: TimeSpan.FromSeconds(60));
                     }
                 }
-                else
+                catch (InvalidOperationException ex)
                 {
-                    Console.WriteLine("Unable to process transaction.");
+                    Console.WriteLine(ex.Message);
                 }
             }
         }
