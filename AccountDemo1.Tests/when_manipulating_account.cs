@@ -132,6 +132,32 @@ namespace AccountDemo1.Tests
                 });
         }
 
+        [Fact]
+        public void credit_fails_when_wrong_account_id()
+        {
+            var accountId = Guid.NewGuid();
+            var correlationId = Guid.NewGuid();
+            Bus.Fire(
+                new CreateAccount(
+                    accountId,
+                    "NewAccount",
+                    correlationId,
+                    null),
+                responseTimeout: TimeSpan.FromMilliseconds(3000));
+
+            const double amountCredited = 123.45;
+            Assert.Throws<CommandException>(
+                () =>
+                {
+                    Bus.Fire(new ApplyCredit(
+                            Guid.NewGuid(),
+                            amountCredited,
+                            correlationId,
+                            Guid.Empty),
+                        responseTimeout: TimeSpan.FromSeconds(60));
+                });
+        }
+
         public void Handle(AccountCreated message)
         {
         }
