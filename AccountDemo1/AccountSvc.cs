@@ -27,9 +27,10 @@ namespace AccountDemo1
 
         public CommandResponse Handle(CreateAccount command)
         {
-            //if (_repo.TryGetById<Account>(command.AccountId))
-            //{
-            //}
+            if (_repo.TryGetById<Account>(command.AccountId, out var existing))
+            {
+                throw new InvalidOperationException("Cannot create an account with a duplicate account id.");
+            }
 
             var account = new Account(
                                 command.AccountId,

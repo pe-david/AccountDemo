@@ -37,7 +37,32 @@ namespace AccountDemo1.Tests
                             .AssertEmpty();
 
             Assert.Equal(accountId, evt.AccountId);
+        }
 
+        [Fact]
+        public void cannot_create_duplicate_account()
+        {
+            var accountId = Guid.NewGuid();
+            var correlationId = Guid.NewGuid();
+            Bus.Fire(
+                new CreateAccount(
+                    accountId,
+                    "NewAccount",
+                    correlationId,
+                    null),
+                responseTimeout: TimeSpan.FromMilliseconds(1500));
+
+            Assert.Throws<CommandException>(
+                () =>
+                {
+                    Bus.Fire(
+                        new CreateAccount(
+                            accountId,
+                            "DuplicateAccount",
+                            correlationId,
+                            null),
+                        responseTimeout: TimeSpan.FromMilliseconds(1500));
+                });
         }
 
         [Fact]
