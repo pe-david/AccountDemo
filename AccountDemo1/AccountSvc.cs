@@ -41,7 +41,7 @@ namespace AccountDemo1
         public CommandResponse Handle(ApplyCredit command)
         {
             var account = _repo.GetById<Account>(command.AccountId);
-            account.ApplyCredit(command.Amount, command.CorrelationId, command.MsgId);
+            account.ApplyCredit(command.AccountId, command.Amount, command.CorrelationId, command.MsgId);
 
             _repo.Save(account, Guid.NewGuid());
             return command.Succeed();
@@ -50,7 +50,7 @@ namespace AccountDemo1
         public CommandResponse Handle(ApplyDebit command)
         {
             var account = _repo.GetById<Account>(command.AccountId);
-            account.ApplyDebit(command.Amount, command.CorrelationId, command.MsgId);
+            account.ApplyDebit(command.AccountId, command.Amount, command.CorrelationId, command.MsgId);
 
             _repo.Save(account, Guid.NewGuid());
             return command.Succeed();

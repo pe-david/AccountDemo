@@ -55,8 +55,11 @@ namespace AccountDemo1
 
         public double Balance { get; private set; }
 
-        public void ApplyCredit(double amount, Guid corrId, Guid sourceId)
+        public void ApplyCredit(Guid accountId, double amount, Guid corrId, Guid sourceId)
         {
+            Ensure.NotEmptyGuid(accountId, nameof(accountId));
+            Ensure.Equal(Id.GetHashCode(), accountId.GetHashCode(), nameof(accountId));
+
             RaiseEvent(new CreditApplied(
                 Id,
                 amount,
@@ -64,8 +67,11 @@ namespace AccountDemo1
                 sourceId: sourceId));
         }
 
-        public void ApplyDebit(double amount, Guid corrId, Guid sourceId)
+        public void ApplyDebit(Guid accountId, double amount, Guid corrId, Guid sourceId)
         {
+            Ensure.NotEmptyGuid(accountId, nameof(accountId));
+            Ensure.Equal(Id.GetHashCode(), accountId.GetHashCode(), nameof(accountId));
+
             RaiseEvent(new DebitApplied(
                 Id,
                 amount,
